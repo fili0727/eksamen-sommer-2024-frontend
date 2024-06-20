@@ -1,22 +1,24 @@
-import { hentDeltagere, redigerDeltager, sletDeltager, hentDiscipliner } from "../../services/apiFacade";
-import { useEffect, useState } from "react";
+import { hentDeltagere, redigerDeltager, sletDeltager, hentDiscipliner} from "../../services/apiFacade";
+import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Deltager from "../../interfaces/deltager";
-import { Køn } from "../../interfaces/køn";
-import { Klub } from "../../interfaces/klub";
-import "../../styling/deltagerliste.css";
 import Disciplin from "../../interfaces/disciplin";
+// import { Køn } from "../../interfaces/køn";
+// import { Klub } from "../../interfaces/klub";
+import "../../styling/deltagerliste.css";
+import { ResultatEnum } from "../../interfaces/resultatEnum";
+
 
 export default function DeltagereListe() {
   const [deltagere, setDeltagere] = useState<Deltager[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [editingDeltager, setEditingDeltager] = useState<Deltager | null>(null);
-  const [nyDeltager, setNyDeltager] = useState<Deltager | null>(null);
-  const [discipliner, setDiscipliner] = useState<Disciplin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentDeltager, setCurrentDeltager] = useState<Deltager | null>(null);
+  const [availableDisciplines, setAvailableDisciplines] = useState<Disciplin[]>([]);
 
   useEffect(() => {
     loadDeltagere();
-    loadDiscipliner();
+    loadDisciplines();
   }, []);
 
   const loadDeltagere = async () => {
@@ -30,60 +32,61 @@ export default function DeltagereListe() {
     }
   };
 
-  const loadDiscipliner = async () => {
+  const loadDisciplines = async () => {
     try {
-      const fetchedDiscipliner = await hentDiscipliner();
-      setDiscipliner(fetchedDiscipliner);
+      const fetchedDisciplines = await hentDiscipliner();
+      setAvailableDisciplines(fetchedDisciplines);
     } catch (error) {
-      setError("Der skete en fejl ved indlæsning af discipliner");
+      setError("Kunne ikke hente discipliner");
     }
   };
 
   const handleEdit = (deltager: Deltager) => {
-    setEditingDeltager(deltager);
-    setNyDeltager({ ...deltager });
-  };
-
-  const handleSave = async () => {
-    if (nyDeltager && nyDeltager.id) {
-      try {
-        const updatedDeltager = await redigerDeltager(nyDeltager);
-        setDeltagere(deltagere.map(d => d.id === updatedDeltager.id ? updatedDeltager : d));
-        setEditingDeltager(null);
-        setNyDeltager(null);
-      } catch (error) {
-        setError("Der skete en fejl ved redigering");
-      }
-    }
+    setCurrentDeltager(deltager);
+    setIsEditing(true);
   };
 
   const handleDelete = async (id: number) => {
     try {
       await sletDeltager(id);
-      setDeltagere(deltagere.filter(d => d.id !== id));
+      setDeltagere(deltagere.filter(deltager => deltager.id !== id));
     } catch (error) {
-      setError("Der skete en fejl ved sletning");
+      setError("Kunne ikke slette deltager");
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+ const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (nyDeltager) {
-      setNyDeltager({
-        ...nyDeltager,
-        [name]: value
-      });
+
+    if (currentDeltager) {
+      if (name === "discipliner") {
+        const options = (e.target as HTMLSelectElement).options;
+        const selectedOptions = Array.from(options)
+          .filter((option: HTMLOptionElement) => option.selected)
+          .map((option: HTMLOptionElement) => option.value);
+
+        const selectedDisciplines = selectedOptions.map(option => {
+          const foundDisciplin = availableDisciplines.find(d => d.disciplinNavn === option);
+          return foundDisciplin || { disciplinNavn: option, ResultatEnum: ResultatEnum.TID }; // Default to a valid ResultatEnum value
+        }) as Disciplin[]; // Ensure it is typed as Disciplin[]
+        setCurrentDeltager({ ...currentDeltager, discipliner: selectedDisciplines });
+      } else {
+        setCurrentDeltager({ ...currentDeltager, [name]: value });
+      }
     }
   };
 
-  const handleDisciplinesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (nyDeltager) {
-      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-      const selectedDiscipliner = discipliner.filter(d => selectedOptions.includes(d.disciplinNavn));
-      setNyDeltager({
-        ...nyDeltager,
-        discipliner: selectedDiscipliner
-      });
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (currentDeltager) {
+      try {
+        await redigerDeltager(currentDeltager);
+        setDeltagere(deltagere.map(deltager => (deltager.id === currentDeltager.id ? currentDeltager : deltager)));
+        setIsEditing(false);
+        setCurrentDeltager(null);
+      } catch (error) {
+        setError("Kunne ikke opdatere deltager");
+      }
     }
   };
 
@@ -116,51 +119,79 @@ export default function DeltagereListe() {
               </td>
               <td className="participants-td">
                 <button className="edit-button" onClick={() => handleEdit(deltager)}>Edit</button>
-                <button className="delete-button" onClick={() => handleDelete(deltager.id!)}>Delete</button>
+                <button className="delete-button" onClick={() => handleDelete(deltager.id || 0)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {editingDeltager && nyDeltager && (
-        <div className="edit-form">
-          <h3>Edit Deltager</h3>
+      {isEditing && currentDeltager && (
+        <form className="edit-form" onSubmit={handleSubmit}>
+          <h3>Rediger Deltager</h3>
           <label>
             Navn:
-            <input type="text" name="navn" value={nyDeltager.navn} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="navn"
+              value={currentDeltager.navn}
+              onChange={handleChange}
+              required
+            />
           </label>
           <label>
             Køn:
-            <select name="køn" value={nyDeltager.køn} onChange={handleInputChange}>
-              {Object.values(Køn).map((kønValue) => (
-                <option key={kønValue} value={kønValue}>{kønValue}</option>
-              ))}
+            <select
+              name="køn"
+              value={currentDeltager.køn}
+              onChange={handleChange}
+              required
+            >
+              <option value="MAND">MAND</option>
+              <option value="KVINDE">KVINDE</option>
+              <option value="ANDEN">ANDEN</option>
             </select>
           </label>
           <label>
             Alder:
-            <input type="number" name="alder" value={nyDeltager.alder} onChange={handleInputChange} />
+            <input
+              type="number"
+              name="alder"
+              value={currentDeltager.alder}
+              onChange={handleChange}
+              required
+            />
           </label>
           <label>
             Klub:
-            <select name="klub" value={nyDeltager.klub} onChange={handleInputChange}>
-              {Object.values(Klub).map((klubValue) => (
-                <option key={klubValue} value={klubValue}>{klubValue}</option>
-              ))}
+            <select
+              name="klub"
+              value={currentDeltager.klub}
+              onChange={handleChange}
+              required
+            >
+              <option value="DEN">DEN</option>
+              <option value="SWE">SWE</option>
             </select>
           </label>
           <label>
             Discipliner:
-            <select multiple name="discipliner" value={nyDeltager.discipliner.map(d => d.disciplinNavn)} onChange={handleDisciplinesChange}>
-              {discipliner.map(disciplin => (
-                <option key={disciplin.id} value={disciplin.disciplinNavn}>{disciplin.disciplinNavn}</option>
+            <select
+              name="discipliner"
+              value={currentDeltager.discipliner.map(d => d.disciplinNavn)}
+              onChange={handleChange}
+              multiple
+              required
+            >
+              {availableDisciplines.map(disciplin => (
+                <option key={disciplin.disciplinNavn} value={disciplin.disciplinNavn}>
+                  {disciplin.disciplinNavn}
+                </option>
               ))}
             </select>
           </label>
-          <button className="save-button" onClick={handleSave}>Save</button>
-          <button className="cancel-button" onClick={() => setEditingDeltager(null)}>Cancel</button>
-        </div>
+          <button type="submit">Opdater</button>
+          <button type="button" onClick={() => setIsEditing(false)}>Annuller</button>
+        </form>
       )}
     </div>
   );
