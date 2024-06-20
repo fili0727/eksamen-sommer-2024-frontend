@@ -13,6 +13,11 @@ export default function Navbar() {
             <p>Deltagere</p>
           </NavLink>
         </li>
+         <li className={location.pathname === '/resultater' ? 'active-header' : ''}>
+          <NavLink to="/resultater" className="nav-link">
+            <p>Resultater</p>
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );

@@ -1,6 +1,4 @@
-/* App.css and Navbar.css are already provided */
-
-/* Participants Table CSS */
+/* Participants Table CSS (Også fra chatgpt)*/
 .participants-container {
   margin: 20px;
   padding: 20px;
@@ -15,6 +13,35 @@
   margin-bottom: 20px;
   text-align: center;
   color: #d63384; /* Deep pink for heading */
+}
+
+.search-input,
+.gender-filter,
+.sort-order {
+  margin: 10px 0;
+  padding: 8px;
+  width: 97%;
+  border: 1px solid #d63384; /* Deep pink border */
+  border-radius: 4px;
+  background-color: #fdeffb; /* Light pink background */
+  color: #5a5a5a; /* Softer dark gray for text */
+}
+
+.create-button {
+  margin: 10px 0;
+  padding: 8px;
+  width: 97%;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ff69b4; /* Hot pink background */
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.create-button:hover {
+  background-color: #ff85c0; /* Lighter hot pink on hover */
 }
 
 .participants-table {
@@ -79,6 +106,7 @@
 .delete-button:hover {
   background-color: #ff5a92; /* Lighter deep pink on hover */
 }
+
 .edit-form {
   background-color: #ffe6f7; /* Light pink background */
   padding: 20px;
@@ -99,9 +127,8 @@
   color: #d63384; /* Deep pink for labels */
 }
 
-.edit-form input[type="text"],
-.edit-form input[type="number"],
-.edit-form select {
+.form-input,
+.form-select {
   width: 100%;
   padding: 10px;
   margin: 5px 0 15px;
@@ -111,8 +138,8 @@
   color: #5a5a5a; /* Softer dark gray for text */
 }
 
-.edit-form button[type="submit"],
-.edit-form button[type="button"] {
+.submit-button,
+.cancel-button {
   padding: 10px 20px;
   margin-top: 10px;
   border: none;
@@ -122,21 +149,43 @@
   font-weight: bold;
 }
 
-.edit-form button[type="submit"] {
+.submit-button {
   background-color: #ff69b4; /* Hot pink background */
   color: white;
 }
 
-.edit-form button[type="button"] {
+.cancel-button {
   background-color: #ff1493; /* Deep pink background */
   color: white;
   margin-left: 10px;
 }
 
-.edit-form button[type="submit"]:hover {
+.submit-button:hover {
   background-color: #ff85c0; /* Lighter hot pink on hover */
 }
 
-.edit-form button[type="button"]:hover {
+.cancel-button:hover {
+  background-color: #ff5a92; /* Lighter deep pink on hover */
+}
+
+.pagination-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.previous-button,
+.next-button {
+  padding: 8px 16px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ff1493; /* Deep pink background */
+  color: white;
+  font-size: 14px;
+}
+
+.previous-button:hover,
+.next-button:hover {
   background-color: #ff5a92; /* Lighter deep pink on hover */
 }

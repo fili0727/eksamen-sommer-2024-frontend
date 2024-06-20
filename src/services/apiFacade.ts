@@ -1,5 +1,6 @@
 import Deltager from '../interfaces/deltager'
 import Disciplin from '../interfaces/disciplin'
+import { Resultat } from '../interfaces/resultat'
 import { API_URL } from '../settings'
 import { makeOptions, handleHttpErrors } from './fetchUtilities'
 
@@ -38,5 +39,11 @@ export async function sletDeltager(id: number): Promise<boolean> {
 export async function hentDiscipliner():Promise<Disciplin[]> {
   const options = makeOptions('GET', null, undefined)
   return fetch(`${API_URL}/discipliner`, options).then(handleHttpErrors)
+  
+}
+
+export async function hentResultater():Promise<Resultat[]> {
+  const options = makeOptions('GET', null, undefined)
+  return fetch(`${API_URL}/resultater`, options).then(handleHttpErrors)
   
 }
