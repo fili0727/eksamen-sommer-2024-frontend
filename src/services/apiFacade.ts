@@ -22,9 +22,17 @@ export async function redigerDeltager(redigeretDeltager:Deltager):Promise<Deltag
   return fetch(`${API_URL}/deltagere/${redigeretDeltager.id}`, options).then(handleHttpErrors)
 }
 
-export async function sletDeltager(id:number):Promise<void> {
-  const options = makeOptions('DELETE', null, undefined)
-  return fetch(`${API_URL}/deltagere/${id}`, options).then(handleHttpErrors)
+export async function sletDeltager(id: number): Promise<boolean> {
+  const options = makeOptions('DELETE', null, undefined);
+  const response = await fetch(`${API_URL}/deltagere/${id}`, options);
+
+  if (response.ok) {
+    console.log("Deltager slettet.");
+    return true;
+  } else {
+    alert("Kan ikke slette deltager med dette id: " + id + "da de har et resultat.");
+    return false;
+  }
 }
 
 export async function hentDiscipliner():Promise<Disciplin[]> {

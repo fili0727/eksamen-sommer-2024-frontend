@@ -1,4 +1,4 @@
-import { hentDeltagere, redigerDeltager, sletDeltager, hentDiscipliner} from "../../services/apiFacade";
+import { hentDeltagere, redigerDeltager, sletDeltager, hentDiscipliner, opretDeltager} from "../../services/apiFacade";
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Deltager from "../../interfaces/deltager";
 import Disciplin from "../../interfaces/disciplin";
@@ -6,6 +6,8 @@ import Disciplin from "../../interfaces/disciplin";
 // import { Klub } from "../../interfaces/klub";
 import "../../styling/deltagerliste.css";
 import { ResultatEnum } from "../../interfaces/resultatEnum";
+import { Køn } from "../../interfaces/køn";
+import { Klub } from "../../interfaces/klub";
 
 
 export default function DeltagereListe() {
@@ -48,14 +50,19 @@ export default function DeltagereListe() {
 
   const handleDelete = async (id: number) => {
     try {
-      await sletDeltager(id);
-      setDeltagere(deltagere.filter(deltager => deltager.id !== id));
+      const wasDeleted = await sletDeltager(id);
+      if (wasDeleted) {
+        setDeltagere(deltagere.filter(deltager => deltager.id !== id));
+      } else {
+        setError("Kunne ikke slette deltager: Deltageren har et resultat");
+      }
     } catch (error) {
-      setError("Kunne ikke slette deltager");
+          setError("Kunne ikke slette deltager: Deltageren har et resultat");
     }
   };
 
- const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     if (currentDeltager) {
@@ -80,22 +87,42 @@ export default function DeltagereListe() {
     e.preventDefault();
     if (currentDeltager) {
       try {
-        await redigerDeltager(currentDeltager);
-        setDeltagere(deltagere.map(deltager => (deltager.id === currentDeltager.id ? currentDeltager : deltager)));
+        if (isEditing) {
+          await redigerDeltager(currentDeltager);
+          await loadDeltagere();
+        } else {
+          await opretDeltager(currentDeltager);
+          await loadDeltagere();
+        }
         setIsEditing(false);
         setCurrentDeltager(null);
       } catch (error) {
-        setError("Kunne ikke opdatere deltager");
+        setError(isEditing ? "Kunne ikke opdatere deltager" : "Kunne ikke oprette deltager");
       }
     }
   };
 
-  if (loading) return <p>Loading participants...</p>;
-  if (error) return <p>{error}</p>;
+  const handleCreateNew = () => {
+    setCurrentDeltager({
+      id: undefined,
+      navn: '',
+      køn: Køn.MAND,
+      alder: 0,
+      klub: Klub.DEN,
+      discipliner: []
+    });
+    setIsEditing(false);
+  };
+
+    if (loading) return <p>Loading participants...</p>;
+    console.log(error)
+
 
   return (
     <div className="participants-container">
       <h2 className="participants-heading">Deltagere</h2>
+       {/* {error && <p>{error}</p>} */}
+      <button className="create-button" onClick={handleCreateNew}>Create New Participant</button>
       <table className="participants-table">
         <thead className="participants-thead">
           <tr className="participants-tr">
@@ -125,30 +152,30 @@ export default function DeltagereListe() {
           ))}
         </tbody>
       </table>
-      {isEditing && currentDeltager && (
+      {(isEditing || currentDeltager) && (
         <form className="edit-form" onSubmit={handleSubmit}>
-          <h3>Rediger Deltager</h3>
+          <h3>{isEditing ? "Rediger Deltager" : "Opret Deltager"}</h3>
           <label>
             Navn:
             <input
               type="text"
               name="navn"
-              value={currentDeltager.navn}
+              value={currentDeltager?.navn || ''}
               onChange={handleChange}
               required
             />
           </label>
-          <label>
+         <label>
             Køn:
             <select
               name="køn"
-              value={currentDeltager.køn}
+              value={currentDeltager?.køn || Køn.MAND} 
               onChange={handleChange}
               required
             >
-              <option value="MAND">MAND</option>
-              <option value="KVINDE">KVINDE</option>
-              <option value="ANDEN">ANDEN</option>
+              <option value={Køn.MAND}>MAND</option>
+              <option value={Køn.KVINDE}>KVINDE</option>
+              <option value={Køn.ANDEN}>ANDEN</option>
             </select>
           </label>
           <label>
@@ -156,28 +183,28 @@ export default function DeltagereListe() {
             <input
               type="number"
               name="alder"
-              value={currentDeltager.alder}
+              value={currentDeltager?.alder || 0}
               onChange={handleChange}
               required
             />
           </label>
-          <label>
+                  <label>
             Klub:
             <select
               name="klub"
-              value={currentDeltager.klub}
+              value={currentDeltager?.klub || Klub.DEN} 
               onChange={handleChange}
               required
             >
-              <option value="DEN">DEN</option>
-              <option value="SWE">SWE</option>
+              <option value={Klub.DEN}>DEN</option>
+              <option value={Klub.SWE}>SWE</option>
             </select>
           </label>
           <label>
             Discipliner:
             <select
               name="discipliner"
-              value={currentDeltager.discipliner.map(d => d.disciplinNavn)}
+              value={currentDeltager?.discipliner.map(d => d.disciplinNavn) || []}
               onChange={handleChange}
               multiple
               required
@@ -189,8 +216,8 @@ export default function DeltagereListe() {
               ))}
             </select>
           </label>
-          <button type="submit">Opdater</button>
-          <button type="button" onClick={() => setIsEditing(false)}>Annuller</button>
+          <button type="submit">{isEditing ? "Opdater" : "Opret"}</button>
+          <button type="button" onClick={() => setCurrentDeltager(null)}>Annuller</button>
         </form>
       )}
     </div>
