@@ -8,9 +8,9 @@ export default function Navbar() {
   return (
     <nav className="nav-header">
       <ul className="nav-header-ul">
-        <li className={location.pathname === '/products' ? 'active-header' : ''}>
-          <NavLink to="/" className="nav-link">
-            <p>Products</p>
+        <li className={location.pathname === '/deltagere' ? 'active-header' : ''}>
+          <NavLink to="/deltagere" className="nav-link">
+            <p>Deltagere</p>
           </NavLink>
         </li>
       </ul>
