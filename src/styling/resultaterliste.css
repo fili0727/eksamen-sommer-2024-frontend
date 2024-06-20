@@ -1,0 +1,117 @@
+.resultater-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #d63384; /* Deep pink border */
+  border-radius: 8px;
+  background-color: #ffccf9; /* Light pink background */
+}
+
+.resultater-heading {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #d63384; /* Deep pink for heading */
+}
+
+.resultater-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.resultater-thead {
+  background-color: #ffe6f7; /* Light pink background */
+}
+
+.resultater-tr {
+  border-bottom: 1px solid #d63384; /* Deep pink border */
+}
+
+.resultater-th, .resultater-td {
+  padding: 12px;
+  text-align: left;
+  color: #5a5a5a; /* Softer dark gray for text */
+}
+
+.resultater-th {
+  background-color: #ffccf9; /* Light pink background */
+  color: #d63384; /* Deep pink for header text */
+}
+
+.resultater-td {
+  background-color: #fff;
+}
+
+.resultater-td:nth-child(odd) {
+  background-color: #ffebf8; /* Very light pink for alternate rows */
+}
+
+.resultater-tr:hover {
+  background-color: #ffe6f7; /* Light pink on hover */
+}
+
+.edit-button, .delete-button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-button {
+  background-color: #ff69b4; /* Hot pink background */
+  color: white;
+}
+
+.delete-button {
+  background-color: #ff1493; /* Deep pink background */
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #ff85c0; /* Lighter hot pink on hover */
+}
+
+.delete-button:hover {
+  background-color: #ff5a92; /* Lighter deep pink on hover */
+}
+
+.create-button {
+  margin: 10px 0;
+  padding: 8px;
+  width: 97%;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ff69b4; /* Hot pink background */
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.create-button:hover {
+  background-color: #ff85c0; /* Lighter hot pink on hover */
+}
+
+.pagination-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.previous-button,
+.next-button {
+  padding: 8px 16px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ff1493; /* Deep pink background */
+  color: white;
+  font-size: 14px;
+}
+
+.previous-button:hover,
+.next-button:hover {
+  background-color: #ff5a92; /* Lighter deep pink on hover */
+}
