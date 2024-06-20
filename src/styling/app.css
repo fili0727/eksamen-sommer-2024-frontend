@@ -1,0 +1,75 @@
+/* App.css */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffe6f7; /* Light pink background */
+  color: #5a5a5a; /* Softer dark gray for text */
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #ffe6f7; /* Same light pink background to blend in */
+  color: #5a5a5a; /* Softer dark gray for text */
+  margin: 20px;
+}
+
+header {
+  width: 100%;
+}
+
+main {
+  flex: 1;
+}
+
+.nav-header {
+  background-color: #ffccf9; /* Light pink background */
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure it is on top */
+  display: flex;
+  justify-content: center;
+}
+
+.nav-header-ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Ensure it spans the full width */
+}
+
+.nav-header-ul li {
+  margin: 0 15px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 18px;
+  color: #d63384; /* Deep pink for the links */
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #ff69b4; /* Hot pink on hover */
+}
+
+.active-header .nav-link {
+  font-weight: bold;
+  color: #ff1493; /* Deep pink when active */
+}
+
+.nav-link p {
+  margin: 0;
+}

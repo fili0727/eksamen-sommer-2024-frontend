@@ -1,0 +1,49 @@
+/* Navbar.css */
+body {
+  margin: 0;
+}
+
+.nav-header {
+  background-color: #ffccf9; /* Light pink background */
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure it is on top */
+  display: flex;
+  justify-content: center;
+}
+
+.nav-header-ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.nav-header-ul li {
+  margin: 0 15px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 18px;
+  color: #d63384; /* Deep pink for the links */
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #ff69b4; /* Hot pink on hover */
+}
+
+.active-header .nav-link {
+  font-weight: bold;
+  color: #ff1493; /* Deep pink when active */
+}
+
+.nav-link p {
+  margin: 0;
+}
