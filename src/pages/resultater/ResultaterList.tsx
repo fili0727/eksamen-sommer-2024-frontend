@@ -4,6 +4,7 @@ import {Resultat} from "../../interfaces/resultat"
 import Deltager from "../../interfaces/deltager"
 import Disciplin from "../../interfaces/disciplin"
 import {ResultatEnum} from "../../interfaces/resultatEnum"
+import ResultaterFormDialog from "./ResultaterFormDialog"
 import "../../styling/resultaterliste.css"
 
 
@@ -14,6 +15,7 @@ export default function ResultaterList() {
   const [loading, setLoading] = useState(true);
   const [deltagere, setDeltagere] = useState<Deltager[]>([]);
   const [discipliner, setDiscipliner] = useState<Disciplin[]>([]);
+  const [showDialog, setShowDialog] = useState(false);
   const [formData, setFormData] = useState<{
     deltagerId?: number;
     disciplinId?: number;
@@ -91,11 +93,13 @@ export default function ResultaterList() {
     });
     if (response.ok) {
       alert('Resultat created successfully!');
+      setShowDialog(false);
       loadResultater(); // Reload the results after creating a new one
     } else {
       alert('Failed to create resultat.');
     }
   };
+ 
 
   console.log(error);
   
@@ -104,11 +108,24 @@ export default function ResultaterList() {
   return (
     <div className="resultater-container">
       <h1 className="resultater-heading">Resultater</h1>
+       <button className="button" onClick={() => setShowDialog(true)}>Add Resultat</button>
 
-      <form onSubmit={handleSubmit} className="resultater-form">
+       {showDialog && (
+        <ResultaterFormDialog
+          deltagere={deltagere}
+          discipliner={discipliner}
+          handleChange={handleChange}
+          handleSelectChange={handleSelectChange}
+          handleSubmit={handleSubmit}
+          onClose={() => setShowDialog(false)}
+        />
+      )}
+
+
+      {/* <form onSubmit={handleSubmit} className="resultater-form">
         <div>
           <label>Deltager</label>
-          <select name="deltagerId" onChange={handleSelectChange}>
+          <select required name="deltagerId" onChange={handleSelectChange}>
             <option value="">Select a Deltager</option>
             {deltagere.map((deltager) => (
               <option key={deltager.id} value={JSON.stringify(deltager)}>
@@ -119,7 +136,7 @@ export default function ResultaterList() {
         </div>
         <div>
           <label>Disciplin</label>
-          <select name="disciplinId" onChange={handleSelectChange}>
+          <select required name="disciplinId" onChange={handleSelectChange}>
             <option value="">Select a Disciplin</option>
             {discipliner.map((disciplin) => (
               <option key={disciplin.id} value={JSON.stringify(disciplin)}>
@@ -130,7 +147,7 @@ export default function ResultaterList() {
         </div>
         <div>
           <label>Resultat Enum</label>
-          <select name="resultatEnum" onChange={handleChange}>
+          <select required name="resultatEnum" onChange={handleChange}>
             {Object.keys(ResultatEnum).map((key) => (
               <option key={key} value={ResultatEnum[key as keyof typeof ResultatEnum]}>
                 {ResultatEnum[key as keyof typeof ResultatEnum]}
@@ -140,7 +157,7 @@ export default function ResultaterList() {
         </div>
         <div>
           <label>Dato</label>
-          <input type="date" name="dato" onChange={handleChange} />
+          <input required type="date" name="dato" onChange={handleChange} />
         </div>
         <div>
           <label>Distance</label>
@@ -159,7 +176,7 @@ export default function ResultaterList() {
           <input type="number" name="point" onChange={handleChange} />
         </div>
         <button type="submit">Create Resultat</button>
-      </form>
+      </form> */}
 
       <table className="resultater-table">
         <thead className="resultater-thead">
@@ -174,7 +191,7 @@ export default function ResultaterList() {
           {resultater.map((resultat: Resultat) => (
             <tr key={resultat.id} className="resultater-tr">
               <td className="resultater-td">{resultat.disciplin.disciplinNavn}</td>
-              <td className="resultater-td">
+             <td className="resultater-td">
                 {resultat.point}✨ 
                 {resultat.distance}✨
                 {resultat.højde}✨

@@ -93,11 +93,11 @@ export default function DeltagereListe() {
     if (currentDeltager) {
       try {
         if (isEditing) {
-          await redigerDeltager(currentDeltager);
-          await loadDeltagere();
+          const opdateretDeltager = await redigerDeltager(currentDeltager);
+          setDeltagere([...deltagere, opdateretDeltager])
         } else {
-          await opretDeltager(currentDeltager);
-          await loadDeltagere();
+          const oprettetDeltager = await opretDeltager(currentDeltager);
+           setDeltagere([...deltagere, oprettetDeltager])
         }
         setIsEditing(false);
         setCurrentDeltager(null);

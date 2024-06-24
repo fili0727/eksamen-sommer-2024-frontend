@@ -77,7 +77,7 @@
   background-color: #ff5a92; /* Lighter deep pink on hover */
 }
 
-.create-button {
+.create-button, .button {
   margin: 10px 0;
   padding: 8px;
   width: 97%;

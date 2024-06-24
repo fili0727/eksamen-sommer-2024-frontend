@@ -47,3 +47,8 @@ export async function hentResultater():Promise<Resultat[]> {
   return fetch(`${API_URL}/resultater`, options).then(handleHttpErrors)
   
 }
+
+export async function opretResultat(nytResultat:Resultat):Promise<Resultat> {
+  const options = makeOptions('POST', nytResultat, undefined)
+  return fetch(`${API_URL}/resultater`, options).then(handleHttpErrors)
+}
